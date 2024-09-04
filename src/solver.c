@@ -26,11 +26,21 @@ static inline void b2Pause (void)
 {
 	__asm__ __volatile__("isb\n");
 }
-#else
+#elif defined(B2_SIMD_SSE2) || defined(B2_SIMD_AVX2)
 #include <immintrin.h>
 static inline void b2Pause(void)
 {
 	_mm_pause();
+}
+#elif defined(B2_CPU_RISCV)
+static inline void b2Pause(void)
+{
+	// pause from Zihintpause
+	__asm__ __volatile__(".word 0x0100000f\n");
+}
+#else
+static inline void b2Pause(void)
+{
 }
 #endif
 
